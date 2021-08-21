@@ -58,10 +58,16 @@ class CreatorPropertyAnnotator implements PropertyAnnotator {
 	public function addAnnotation( DIProperty $property, SemanticData $semanticData ) {
 
 		$page = $this->appFactory->newWikiPage( $semanticData->getSubject()->getTitle() );
-		$creator = User::newFromIdentity( $page->getCreator() );
+		$creator = $page->getCreator();
+
+		if ( !$creator ) {
+			return;
+		}
+
+		$creator = User::newFromIdentity( $creator );
 		$dataItem = null;
 
-		if ( $creator && ( $userPage = $creator->getUserPage() ) instanceof Title ) {
+		if ( ( $userPage = $creator->getUserPage() ) instanceof Title ) {
 			$dataItem = DIWikiPage::newFromTitle( $userPage );
 		}
 
