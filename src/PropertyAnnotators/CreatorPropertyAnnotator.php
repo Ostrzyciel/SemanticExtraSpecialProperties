@@ -9,6 +9,7 @@ use SMWDataItem as DataItem;
 use SESP\PropertyAnnotator;
 use SESP\AppFactory;
 use Title;
+use User;
 
 /**
  * @private
@@ -58,9 +59,15 @@ class CreatorPropertyAnnotator implements PropertyAnnotator {
 
 		$page = $this->appFactory->newWikiPage( $semanticData->getSubject()->getTitle() );
 		$creator = $page->getCreator();
+
+		if ( !$creator ) {
+			return;
+		}
+
+		$creator = User::newFromIdentity( $creator );
 		$dataItem = null;
 
-		if ( $creator && ( $userPage = $creator->getUserPage() ) instanceof Title ) {
+		if ( ( $userPage = $creator->getUserPage() ) instanceof Title ) {
 			$dataItem = DIWikiPage::newFromTitle( $userPage );
 		}
 
